@@ -1,5 +1,5 @@
 //jshint esversion:6
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
@@ -12,8 +12,11 @@ app.use(express.static("public"));
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const mdbpwd = process.env.MONGODB;
 mongoose.connect(
-  `mongodb+srv://jaime:1nHdXlr8DQ6owE0U@security-cluster.frmzjfb.mongodb.net/?retryWrites=true&w=majority`
+  `mongodb+srv://jai:` +
+    mdbpwd +
+    `@security-cluster.frmzjfb.mongodb.net/?retryWrites=true&w=majority`
 );
 
 const db = mongoose.connection;
@@ -27,7 +30,10 @@ const userSchema = new mongoose.Schema({
   password: String,
 });
 
-userSchema.plugin(encrypt, { secret: process.env.SECRET, encryptedFields: ["password"] });
+userSchema.plugin(encrypt, {
+  secret: process.env.SECRET,
+  encryptedFields: ["password"],
+});
 
 const User = mongoose.model("User", userSchema);
 
@@ -64,7 +70,7 @@ app.post("/login", (req, res) => {
   const password = req.body.password;
   User.findOne({ email: username })
     .then((user) => {
-    //   console.log(user);
+      //   console.log(user);
       if (user && user.password === password) {
         res.render("secrets");
       } else {
